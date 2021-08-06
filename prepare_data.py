@@ -2,12 +2,15 @@ import argparse
 
 import yaml
 
-from preprocessor import ljspeech
+from preprocessor import ljspeech, viet_tts
 
 
 def main(config):
     if "LJSpeech" in config["dataset"]:
         ljspeech.prepare_data(config)
+
+    if 'viet_tts' in config["dataset"]:
+        viet_tts.prepare_align(config)
 
 
 if __name__ == "__main__":
