@@ -6,6 +6,7 @@ import tgt
 import librosa
 import numpy as np
 from tqdm import tqdm
+import re
 
 import audio as Audio
 from text import grapheme_to_phoneme

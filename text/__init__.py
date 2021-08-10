@@ -63,7 +63,7 @@ def grapheme_to_phoneme(text, lexicon=None):
     for w in words:
         if w in punctuation:
             phones += [w]
-        elif lexicon:
+        elif lexicon and w in lexicon:
             phones += lexicon[w.lower()]
         else:
             phones += list(filter(lambda p: p != " ", g2p(w)))
