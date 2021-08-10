@@ -6,10 +6,10 @@ import tgt
 import librosa
 import numpy as np
 from tqdm import tqdm
-
+from joblib import Parallel, delayed
 import audio as Audio
 from text import grapheme_to_phoneme
-
+from joblib import Parallel, delayed
 
 class Preprocessor:
     def __init__(self, config):
@@ -44,27 +44,32 @@ class Preprocessor:
 
         # Compute pitch, energy, duration, and mel-spectrogram
         speakers = {}
+        def _process(wav_name, self):
+            nonlocal mel_min
+            nonlocal mel_max
+            nonlocal n_frames
+            if ".wav" not in wav_name:
+                return
+
+            basename = wav_name.split(".")[0]
+
+            ret = self.process_utterance(speaker, basename)
+            if ret is None:
+                return
+            else:
+                info, n, m_min, m_max = ret
+            out.append(info)
+
+            if mel_min > m_min:
+                mel_min = m_min
+            if mel_max < m_max:
+                mel_max = m_max
+
+            n_frames += n
         for i, speaker in enumerate(tqdm(os.listdir(self.in_dir))):
             speakers[speaker] = i
-            for wav_name in tqdm(os.listdir(os.path.join(self.in_dir, speaker))):
-                if ".wav" not in wav_name:
-                    continue
-
-                basename = wav_name.split(".")[0]
-
-                ret = self.process_utterance(speaker, basename)
-                if ret is None:
-                    continue
-                else:
-                    info, n, m_min, m_max = ret
-                out.append(info)
-
-                if mel_min > m_min:
-                    mel_min = m_min
-                if mel_max < m_max:
-                    mel_max = m_max
-
-                n_frames += n
+            # for wav_name in tqdm(os.listdir(os.path.join(self.in_dir, speaker))):
+            Parrelel(n_jobs=32)(delayed(_process)(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker))))
 
         # Save files
         with open(os.path.join(self.out_dir, "speakers.json"), "w") as f:
