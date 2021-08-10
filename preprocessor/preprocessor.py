@@ -23,7 +23,9 @@ class Preprocessor:
         self.trim_top_db = config["preprocessing"]["audio"]["trim_top_db"]
         self.filter_length = config["preprocessing"]["stft"]["filter_length"]
         self.hop_length = config["preprocessing"]["stft"]["hop_length"]
-        self.lexicon = read_lexicon(config["path"]["lexicon_path"])
+        self.lexicon = read_lexicon(config["path"]["lexicon_path"])  
+        for k in ["sp", "spn", "sil"]:
+            self.lexicon[k] = k
         self.STFT = Audio.stft.TacotronSTFT(
             config["preprocessing"]["stft"]["filter_length"],
             config["preprocessing"]["stft"]["hop_length"],

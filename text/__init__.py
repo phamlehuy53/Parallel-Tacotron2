@@ -59,6 +59,10 @@ def grapheme_to_phoneme(text, lexicon=None):
     """Converts prapheme to phoneme with punctuation"""
     g2p = G2p()
     phones = []
+    silent_punc = "[.;:,!-?]"
+    text = re.sub(rf"{silent_punc}", ' sp ', text)
+    text = re.sub(rf"{silent_punc}{2}", ' spn ', text)
+    text = re.sub(rf"{silent_punc}{3,}", ' sil ', text)
     words = filter(None, re.split(r"([,:;.\(\)\'\-\?\!\s+])", text))
     for w in words:
         if w in punctuation:
@@ -66,7 +70,7 @@ def grapheme_to_phoneme(text, lexicon=None):
         elif lexicon and w in lexicon:
             phones += lexicon[w.lower()]
         else:
-            print('Using g2p')
+            print('Using g2p with {}'.format(w))
             phones += list(filter(lambda p: p != " ", g2p(w)))
     return phones
 
