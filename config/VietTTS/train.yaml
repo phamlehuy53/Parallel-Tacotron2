@@ -1,7 +1,7 @@
 path:
-  ckpt_path: "./output/ckpt/VietTTS"
-  log_path: "./output/log/VietTTS"
-  result_path: "./output/result/VietTTS"
+  ckpt_path: "./output/ckpt/parl-vlsp2017"
+  log_path: "./output/log/parl-vlsp2017"
+  result_path: "./output/result/parl-vlsp2017"
 loss:
   gamma: 0.05
   warp: 128

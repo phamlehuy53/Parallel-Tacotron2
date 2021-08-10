@@ -1,9 +1,9 @@
-dataset: "VietTTS"
+dataset: "viet_tts"
 
 path:
   corpus_path: "../data/"
   raw_path: "./raw_data/VietTTS"
-  preprocessed_path: "./preprocessed_data/VietTTS"
+  preprocessed_path: "./preprocessed_data"
 
 preprocessing:
   val_size: 512
