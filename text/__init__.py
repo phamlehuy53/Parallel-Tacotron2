@@ -66,6 +66,7 @@ def grapheme_to_phoneme(text, lexicon=None):
         elif lexicon and w in lexicon:
             phones += lexicon[w.lower()]
         else:
+            print('Using g2p')
             phones += list(filter(lambda p: p != " ", g2p(w)))
     return phones
 
