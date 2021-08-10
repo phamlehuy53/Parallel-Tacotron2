@@ -6,10 +6,9 @@ import tgt
 import librosa
 import numpy as np
 from tqdm import tqdm
-from joblib import Parallel, delayed
 import audio as Audio
 from text import grapheme_to_phoneme
-from joblib import Parallel, delayed
+import multiprocessing
 
 class Preprocessor:
     def __init__(self, config):
@@ -67,9 +66,11 @@ class Preprocessor:
 
             n_frames += n
         for i, speaker in enumerate(tqdm(os.listdir(self.in_dir))):
+            pool_obj = multiprocessing.Pool()
             speakers[speaker] = i
             # for wav_name in tqdm(os.listdir(os.path.join(self.in_dir, speaker))):
-            Parallel(n_jobs=32)(delayed(_process)(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker))))
+            # Parallel(n_jobs=32)(delayed(_process)(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker))))
+            pool_obj.map(_process, [(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker)))])
 
         # Save files
         with open(os.path.join(self.out_dir, "speakers.json"), "w") as f:
