@@ -6,9 +6,10 @@ import tgt
 import librosa
 import numpy as np
 from tqdm import tqdm
+
 import audio as Audio
 from text import grapheme_to_phoneme
-import multiprocessing
+
 
 class Preprocessor:
     def __init__(self, config):
@@ -21,7 +22,7 @@ class Preprocessor:
         self.trim_top_db = config["preprocessing"]["audio"]["trim_top_db"]
         self.filter_length = config["preprocessing"]["stft"]["filter_length"]
         self.hop_length = config["preprocessing"]["stft"]["hop_length"]
-
+        self.lexicon = read_lexicon(config["path"]["lexicon_path"])
         self.STFT = Audio.stft.TacotronSTFT(
             config["preprocessing"]["stft"]["filter_length"],
             config["preprocessing"]["stft"]["hop_length"],
@@ -43,34 +44,27 @@ class Preprocessor:
 
         # Compute pitch, energy, duration, and mel-spectrogram
         speakers = {}
-        def _process(wav_name, self):
-            nonlocal mel_min
-            nonlocal mel_max
-            nonlocal n_frames
-            if ".wav" not in wav_name:
-                return
-
-            basename = wav_name.split(".")[0]
-
-            ret = self.process_utterance(speaker, basename)
-            if ret is None:
-                return
-            else:
-                info, n, m_min, m_max = ret
-            out.append(info)
-
-            if mel_min > m_min:
-                mel_min = m_min
-            if mel_max < m_max:
-                mel_max = m_max
-
-            n_frames += n
         for i, speaker in enumerate(tqdm(os.listdir(self.in_dir))):
-            pool_obj = multiprocessing.Pool()
             speakers[speaker] = i
-            # for wav_name in tqdm(os.listdir(os.path.join(self.in_dir, speaker))):
-            # Parallel(n_jobs=32)(delayed(_process)(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker))))
-            pool_obj.map(_process, [(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker)))])
+            for wav_name in tqdm(os.listdir(os.path.join(self.in_dir, speaker))):
+                if ".wav" not in wav_name:
+                    continue
+
+                basename = wav_name.split(".")[0]
+
+                ret = self.process_utterance(speaker, basename)
+                if ret is None:
+                    continue
+                else:
+                    info, n, m_min, m_max = ret
+                out.append(info)
+
+                if mel_min > m_min:
+                    mel_min = m_min
+                if mel_max < m_max:
+                    mel_max = m_max
+
+                n_frames += n
 
         # Save files
         with open(os.path.join(self.out_dir, "speakers.json"), "w") as f:
@@ -125,7 +119,7 @@ class Preprocessor:
             raw_text = f.readline().strip("\n")
 
         # Get phoneme
-        phone = grapheme_to_phoneme(raw_text)
+        phone = grapheme_to_phoneme(raw_text, lexicon=self.lexicon)
         text = "{" + " ".join(phone) + "}"
 
         # Save files
@@ -141,3 +135,13 @@ class Preprocessor:
             np.min(mel_spectrogram),
             np.max(mel_spectrogram),
         )
+def read_lexicon(lex_path):
+    lexicon = {}
+    with open(lex_path) as f:
+        for line in f:
+            temp = re.split(r"\s+", line.strip("\n"))
+            word = temp[0]
+            phones = temp[1:]
+            if word.lower() not in lexicon:
+                lexicon[word.lower()] = phones
+    return lexicon

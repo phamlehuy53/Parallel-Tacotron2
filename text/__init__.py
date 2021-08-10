@@ -55,7 +55,7 @@ def sequence_to_text(sequence):
     return result.replace("}{", " ")
 
 
-def grapheme_to_phoneme(text):
+def grapheme_to_phoneme(text, lexicon=None):
     """Converts prapheme to phoneme with punctuation"""
     g2p = G2p()
     phones = []
@@ -63,6 +63,8 @@ def grapheme_to_phoneme(text):
     for w in words:
         if w in punctuation:
             phones += [w]
+        elif lexicon:
+            phones += lexicon[w.lower()]
         else:
             phones += list(filter(lambda p: p != " ", g2p(w)))
     return phones
