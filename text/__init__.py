@@ -57,7 +57,7 @@ def sequence_to_text(sequence):
 
 def grapheme_to_phoneme(text, lexicon=None):
     """Converts prapheme to phoneme with punctuation"""
-    g2p = G2p()
+    # g2p = G2p()
     phones = []
     silent_punc = "[.;:,!-?]"
     text = re.sub(rf"{silent_punc}", ' sp ', text)
@@ -70,8 +70,11 @@ def grapheme_to_phoneme(text, lexicon=None):
         elif lexicon and w in lexicon:
             phones += lexicon[w.lower()]
         else:
-            print('Using g2p with {}'.format(w))
-            phones += list(filter(lambda p: p != " ", g2p(w)))
+            # print('Using g2p with {}'.format(w))
+            # phones += list(filter(lambda p: p != " ", g2p(w)))
+
+            print(f"Not found {w}, keep origin!")
+            phones.append(w)
     return phones
 
 
