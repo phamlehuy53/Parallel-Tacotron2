@@ -2,7 +2,7 @@ dataset: "viet_tts"
 
 path:
   corpus_path: "../data/"
-  raw_path: "./raw_data/VietTTS"
+  raw_path: "./raw_data/"
   preprocessed_path: "./preprocessed_data"
 
 preprocessing:
