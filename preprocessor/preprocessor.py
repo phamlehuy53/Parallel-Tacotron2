@@ -69,7 +69,7 @@ class Preprocessor:
         for i, speaker in enumerate(tqdm(os.listdir(self.in_dir))):
             speakers[speaker] = i
             # for wav_name in tqdm(os.listdir(os.path.join(self.in_dir, speaker))):
-            Parrelel(n_jobs=32)(delayed(_process)(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker))))
+            Parallel(n_jobs=32)(delayed(_process)(wav_name, self) for wav_name in  tqdm(os.listdir(os.path.join(self.in_dir, speaker))))
 
         # Save files
         with open(os.path.join(self.out_dir, "speakers.json"), "w") as f:
