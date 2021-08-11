@@ -6,7 +6,8 @@ text_encoder:
   encoder_hidden: 256
   encoder_dropout: 0.2
   conv_layer: 3
-  conv_kernel_size: 5
+  # conv_kernel_size: 5
+  conv_kernel_size: 3
   trans_head: 2
   trans_layer: 6
   trans_kernel_size: [9, 1]
