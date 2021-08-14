@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 from torch.nn import functional as F
 # from fairseq.modules import LightweightConv
-from fairseq.modules import LightweightConv1dTBC # TODO: quick fix non-compiled LightconvLayer
+from fairseq.modules import LightweightConv1dTBC as  LightweightConv # TODO: quick fix non-compiled LightconvLayer
 
 
 class SwishBlock(nn.Module):
