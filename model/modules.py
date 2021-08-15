@@ -58,6 +58,8 @@ class TextEncoder(nn.Module):
         n_src_vocab = len(symbols) + 1
         d_word_vec = config["text_encoder"]["encoder_hidden"]
         n_layers_conv = config["text_encoder"]["conv_layer"]
+        conv_stride = config["text_encoder"]["stride"]
+        conv_dilation = config["text_encoder"]["dilation"]
         n_layers_trans = config["text_encoder"]["trans_layer"]
         n_head = config["text_encoder"]["trans_head"]
         d_k = d_v = (
@@ -84,7 +86,7 @@ class TextEncoder(nn.Module):
         self.convolution_stack = nn.ModuleList(
             [
                 ConvBlock(
-                    d_encoder, d_encoder, kernel_size_conv, dropout=dropout 
+                    d_encoder, d_encoder, kernel_size_conv, dropout=dropout, stride=conv_stride, dilation=conv_dilation
                 )
                 for _ in range(n_layers_conv)
             ]

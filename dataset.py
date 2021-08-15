@@ -11,13 +11,23 @@ from utils.tools import pad_1D, pad_2D
 
 class Dataset(Dataset):
     def __init__(
-        self, filename, preprocess_config, train_config, sort=False, drop_last=False
+        self, filename, preprocess_config, train_config, model_config, sort=False, drop_last=False
     ):
         self.dataset_name = preprocess_config["dataset"]
         self.preprocessed_path = preprocess_config["path"]["preprocessed_path"]
         self.cleaners = preprocess_config["preprocessing"]["text"]["text_cleaners"]
         self.batch_size = train_config["optimizer"]["batch_size"]
 
+        def _get_min_seq_len(padding, dilation, kernel_size, stride, reqpeat=1):
+            min_len = kernel_size
+            for _ in range(reqpeat):
+                min_len = (min_len-1)*stride+1+dilation*(kernel_size-1)-2*padding
+            return min_len
+        _conv_kernel_size = model_config["text_encoder"]["conv_kernel_size"]
+        _conv_stride = model_config["text_encoder"]["stride"]
+        _conv_dilation = model_config["text_encoder"]["dilation"]
+        _conv_padding = (_conv_kernel_size-1)//2
+        self.min_seq_len = _get_min_seq_len(_conv_padding, _conv_dilation, _conv_kernel_size, _conv_stride, reqpeat=model_config["text_encoder"]["conv_layer"])
         self.basename, self.speaker, self.text, self.raw_text = self.process_meta(
             filename
         )
@@ -62,6 +72,8 @@ class Dataset(Dataset):
             raw_text = []
             for line in f.readlines():
                 n, s, t, r = line.strip("\n").split("|")
+                if len(t <= self.min_seq_len):
+                    continue
                 name.append(n)
                 speaker.append(s)
                 text.append(t)

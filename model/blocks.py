@@ -103,7 +103,7 @@ class LConvBlock(nn.Module):
 class ConvBlock(nn.Module):
     """ Convolutional Block """
 
-    def __init__(self, in_channels, out_channels, kernel_size, dropout, activation=nn.ReLU()):
+    def __init__(self, in_channels, out_channels, kernel_size, dropout, activation=nn.ReLU(), stride=1, dilation=1):
         super(ConvBlock, self).__init__()
 
         self.conv_layer = nn.Sequential(
@@ -111,9 +111,9 @@ class ConvBlock(nn.Module):
                 in_channels,
                 out_channels,
                 kernel_size=kernel_size,
-                stride=1,
+                stride=stride,
                 padding=int((kernel_size - 1) / 2),
-                dilation=1,
+                dilation=dilation,
                 w_init_gain="tanh",
             ),
             nn.BatchNorm1d(out_channels),
