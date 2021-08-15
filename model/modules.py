@@ -114,6 +114,7 @@ class TextEncoder(nn.Module):
                 enc_output, mask=mask
             )
 
+
         if not self.training and src_seq.shape[1] > self.max_seq_len:
             enc_output = enc_output + get_sinusoid_encoding_table(
                 src_seq.shape[1], self.d_encoder

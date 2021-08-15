@@ -25,4 +25,4 @@ _vie_phones = ['a', 'ai', 'am', 'an', 'ang', 'anh', 'ao', 'au', 'ay', 'b', 'c', 
 #     + _arpabet
 # )
 
-symbols = list(_vie_phones) + list(punctuation)
+symbols = list(_vie_phones)

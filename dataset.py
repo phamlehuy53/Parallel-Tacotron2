@@ -72,8 +72,8 @@ class Dataset(Dataset):
             raw_text = []
             for line in f.readlines():
                 n, s, t, r = line.strip("\n").split("|")
-                if len(t.split()) <= self.min_seq_len:
-                    continue
+                # if len(t.split()) <= self.min_seq_len:
+                #     continue
                 name.append(n)
                 speaker.append(s)
                 text.append(t)
