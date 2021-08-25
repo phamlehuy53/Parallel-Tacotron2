@@ -11,7 +11,7 @@ loss:
   kl_end: 50000
   kl_upper: 0.01
 optimizer:
-  batch_size: 16
+  batch_size: 8
   betas: [0.9, 0.98]
   eps: 0.000000001
   weight_decay: 0.0
@@ -23,7 +23,7 @@ optimizer:
   init_lr: 0.005
 step:
   total_step: 900000
-  log_step: 100
-  synth_step: 500
-  val_step: 1000
-  save_step: 50000
+  log_step: 1000
+  synth_step: 5000
+  val_step: 5000
+  save_step: 5000
